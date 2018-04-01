@@ -87,14 +87,9 @@ describe('Scene', () => {
       it('throws a scene error if given a particle out of bounds', () => {
         const Scene = new _Scene(basicSceneOpts)
         const error = {}
-        sandbox.stub(Scene, '_throwSceneError').returns(error)
+        sandbox.stub(Scene, '_getSceneError').returns(error)
 
-        expect(Scene.addParticle({ row: 0, column: 2, color: 'red' })).toEqual(error)
-        assert.calledOnce(Scene._throwSceneError)
-        assert.calledWith(Scene._throwSceneError, {
-          type: Scene.Debugger.errorTypes.RangeError,
-          message: '(addParticle) row: 0 column: 2 is out of bounds'
-        })
+        expect(() => Scene.addParticle({ row: 0, column: 2, color: 'red' })).toThrow()
       })
     })
 
@@ -117,22 +112,18 @@ describe('Scene', () => {
       })
     })
 
-    describe('_throwSceneError', () => {
+    describe('_getSceneError', () => {
       afterEach(() => {
         sandbox.restore()
       })
 
-      it(`calls Scene.Debugger.throw with module set to 'Scene'`, () => {
+      it(`returns the result of Scene.Debugger.getError with module set to 'Scene'`, () => {
         const Scene = new _Scene(basicSceneOpts)
-        sandbox.stub(Scene.Debugger, 'throw')
+        const errorFromDebugger = {}
+        const errorFromSceneError = {}
+        sandbox.stub(Scene.Debugger, 'getError').returns(errorFromDebugger)
 
-        const error = { type: '', message: '', info: '' }
-        Scene._throwSceneError(error)
-        assert.calledOnce(Scene.Debugger.throw)
-        assert.calledWith(Scene.Debugger.throw, {
-          ...error,
-          module: 'Scene'
-        })
+        expect(Scene._getSceneError({})).toEqual(errorFromDebugger)
       })
     })
   })

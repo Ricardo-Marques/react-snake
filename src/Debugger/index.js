@@ -7,14 +7,15 @@ export type ErrorType =
 export type Error = {|
   type: ErrorType,
   module: string,
-  message: string
+  message: string,
+  info: *
 |}
 
 export interface IDebugger {
   errorTypes: {
     [type: ErrorType]: ErrorType
   },
-  throw ({| type: ErrorType, module: string, message: string, info: * |}): void,
+  getError (Error): Error,
   getErrorTypes (): $PropertyType<IDebugger, 'errorTypes'>
 }
 
@@ -27,10 +28,10 @@ export default class Debugger implements IDebugger {
     this.errorTypes = this.getErrorTypes()
   }
 
-  throw (opts: {| type: ErrorType, module: string, message: string, info: * |}) {
+  getError (opts: Error) {
     const { type, module, message, info } = opts
 
-    throw {
+    return {
       type: this.errorTypes[type],
       module,
       message,

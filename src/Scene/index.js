@@ -23,10 +23,10 @@ type SceneState = {
   }
 }
 
-interface IScene {
+export interface IScene {
   getInitialSceneState ({| rows: number, columns: number, backgroundColor: string |}): SceneState;
   addParticle (Particle): Particle,
-  resetParticle (Particle): Particle
+  resetParticle ({| row: number, column: number |}): void
 }
 
 export default class Scene implements IScene {
@@ -64,7 +64,7 @@ export default class Scene implements IScene {
   addParticle (particle: Particle) {
     const { row, column, color } = particle
     if (row > this.rows || column > this.columns || row < 1 || column < 1) {
-      this._throwSceneError({
+      throw this._getSceneError({
         type: this.Debugger.errorTypes.RangeError,
         message: `(addParticle) row: ${row} column: ${column} is out of bounds`
       })
@@ -78,17 +78,17 @@ export default class Scene implements IScene {
     return particle
   }
 
-  resetParticle (particle: Particle) {
-    return this.addParticle({
-      row: particle.row,
-      column: particle.column,
+  resetParticle ({ row, column }: { row: number, column: number }) {
+    this.addParticle({
+      row,
+      column,
       color: this.backgroundColor
     })
   }
 
-  _throwSceneError (opts: {| type: ErrorType, message: string, info?: * |}) {
+  _getSceneError (opts: {| type: ErrorType, message: string, info?: * |}) {
     const { type, message, info } = opts
 
-    this.Debugger.throw({ module: 'Scene', type, message, info })
+    return this.Debugger.getError({ module: 'Scene', type, message, info })
   }
 }

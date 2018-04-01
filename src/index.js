@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { render } from 'react-dom';
-import Hello from './Hello';
+
 import './style.css';
 
 class App extends Component {
@@ -91,14 +91,14 @@ function growSnake () {
 }
 
 
-  
+
 function drawGrid (gridWrapper, columns, rows, opts = {}) {
   gridWrapper.style.gridTemplateColumns = `repeat(${columns}, 1fr)`;
   gridWrapper.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
-  
+
   if (opts.drawLines) {
     for (let i = 1; i <= columns * rows; i++) {
-     gridWrapper.appendChild(document.createElement('div')) 
+     gridWrapper.appendChild(document.createElement('div'))
     }
 
     const divs = gridWrapper
@@ -111,7 +111,7 @@ function drawGrid (gridWrapper, columns, rows, opts = {}) {
       divs[i].style.background = '#EEE'
       divs[i].style.opacity = '0.7'
       divs[i].style.zIndex = -1
-    } 
+    }
   }
 }
 
